@@ -1,16 +1,4 @@
-// 注册Service Worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/sw.js")
-    .then(function (registration) {
-      console.log("Service Worker 注册成功:", registration);
-    })
-    .catch(function (error) {
-      console.log("Service Worker 注册失败:", error);
-    });
-}
-
-// service-worker.js
+let reqs = [];
 
 // 安装Service Worker
 self.addEventListener("install", function (event) {
@@ -25,6 +13,7 @@ self.addEventListener("install", function (event) {
 self.addEventListener("fetch", function (event) {
   event.respondWith(
     caches.match(event.request).then(function (response) {
+      reqs.push(event.request);
       if (response) {
         return response;
       }
@@ -47,4 +36,15 @@ self.addEventListener("activate", function (event) {
       );
     })
   );
+});
+
+self.addEventListener("message", (event) => {
+  // 接收来自主线程的消息
+  const message = event.data;
+  console.log("Service Worker received message:", message);
+
+  console.log(1111, reqs);
+
+  // 向主线程发送消息
+  event.source.postMessage("Hello from Service Worker!");
 });
