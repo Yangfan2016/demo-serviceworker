@@ -16,12 +16,12 @@
           navigator.serviceWorker
             .register("/sw.js")
             .then((registration) => {
-              console.log("注册成功", );
-            //   const { port1, port2 } = new MessageChannel();
-            //   port1.addEventListener("message", (ev) => {
-            //     console.log("收到了 sw 的消息", ev.data);
-            //   });
-            //   navigator.serviceWorker.controller?.postMessage("init", [port2]);
+              console.log("注册成功");
+              const { port1, port2 } = new MessageChannel();
+              port1.addEventListener("message", (ev) => {
+                console.log("收到了 sw 的消息", ev.data);
+              });
+              navigator.serviceWorker.controller?.postMessage("主线程往 sw 发一个消息", [port2]);
             })
             .catch((err) => {
               console.log("注册失败", err);
